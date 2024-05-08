@@ -1,9 +1,10 @@
 import React from "react";
-
+import EventNoteIcon from '@mui/icons-material/EventNote';
 function Header() {
   return (
     <header>
-      <h1>Notebook</h1>
+    
+      <h1><EventNoteIcon/>Notebook</h1>
     </header>
   );
 }
