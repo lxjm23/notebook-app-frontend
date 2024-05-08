@@ -24,5 +24,5 @@ The app will be running at `http://localhost:3000` by default.
 - React: A JavaScript library for building user interfaces.
 - Material-UI: A popular React UI framework for designing attractive and responsive web applications.
 
-##Link to Server
+## Link to Server
 https://github.com/lxjm23/notebook-app-server
