@@ -3,80 +3,87 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
 import CreateArea from "./CreateArea";
-import { BACKEND_URL } from "../api";
+import { apiUrl, API_BASE } from "../api";
 
 function App() {
 
   const [notes, setNotes] = useState([])
   const [noteToEdit, setNoteToEdit] = useState(null)
+
   useEffect(() =>{
+    console.log('API_BASE:', API_BASE);
     fetchNotes()
   }, [notes])
 
   
 
-  const fetchNotes = async() =>{
-    const response = await fetch(`${BACKEND_URL}notes`)
-    const result = await response.json()
-    setNotes(result)
-  }
+  const fetchNotes = async () => {
+    try {
+      const res = await fetch(apiUrl('/notes'));
+      if (!res.ok) throw new Error(`GET /notes ${res.status}`);
+      const data = await res.json();
+      setNotes(data);
+    } catch (e) {
+      console.error(e);
+      alert('Failed to load notes.');
+    }
+  };
 
   
   
 
    const AddNote = (newNote) =>{
     
-    fetch(`${BACKEND_URL}newNote`,{
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({title: newNote.title, content: newNote.content})
-    })
-    .then(res =>{
-      if(!res.ok){
-        throw new Error("Network response was not ok");
-      }return res.json()
-    })
+    try {
+      const res = await fetch(apiUrl('/newNote'), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: newNote.title, content: newNote.content })
+      });
+      if (!res.ok) throw new Error(`POST /newNote ${res.status}`);
+      await fetchNotes(); // refresh list
+    } catch (e) {
+      console.error(e);
+      alert('Could not save note.');
+    }
   }
 
 
-  const DeleteNote = (id) =>{
-    const confirmation = window.confirm("Are you sure you want to delete this note?")
-    if(confirmation){
-      fetch(`${BACKEND_URL}delete`,{
+  const DeleteNote = async(id) =>{
+    const confirmation = window.confirm("Delete this note?");
+    if (!confirmation) return;
+    try {
+      const res = await fetch(apiUrl('/delete'), {
         method: "DELETE",
-        headers:{
-          "Content-Type" : "application/json"
-        },
-        body: JSON.stringify({id})
-      }).then(res=>{
-        if(!res.ok){
-          throw new Error("Network response was not okay");
-        }return res.json()
-      })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
+      if (!res.ok) throw new Error(`DELETE /delete ${res.status}`);
+      await fetchNotes();
+    } catch (e) {
+      console.error(e);
+      alert('Could not delete note.');
     }
   }
 
   const Edit = (id) =>{
-    const noteToEdit = notes.find(note => note._id === id);
-    setNoteToEdit(noteToEdit)
+    const selected = notes.find(n => n._id === id);
+    setNoteToEdit(selected || null);
   }
 
-  const UpdateNote = (updatedNote) =>{
-    fetch(`${BACKEND_URL}update`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ id: updatedNote._id, updatedNote })
-    })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return res.json();
-    });
+  const UpdateNote = async(updatedNote) =>{
+    try {
+      const res = await fetch(apiUrl('/update'), {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: updatedNote._id, updatedNote })
+      });
+      if (!res.ok) throw new Error(`PATCH /update ${res.status}`);
+      await fetchNotes();
+    } catch (e) {
+      console.error(e);
+      alert('Could not update note.');
+    }
   };
  
 
