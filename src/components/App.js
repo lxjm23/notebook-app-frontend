@@ -10,10 +10,21 @@ function App() {
   const [notes, setNotes] = useState([])
   const [noteToEdit, setNoteToEdit] = useState(null)
 
-  useEffect(() =>{
+  useEffect(() => {
     console.log('API_BASE:', API_BASE);
-    fetchNotes()
-  }, [notes])
+    (async () => {
+      try {
+        // optional: “warm” Render before real fetch
+        await fetchWithRetry(apiUrl('/api/health')).catch(() => {});
+        const res = await fetchWithRetry(apiUrl('/notes'), { cache: 'no-store' });
+        const data = await res.json();
+        setNotes(data);
+      } catch (e) {
+        console.error(e);
+        alert('Failed to load notes.');
+      }
+    })();
+  }, []);
 
   
 
