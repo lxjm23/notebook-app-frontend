@@ -32,7 +32,7 @@ function App() {
   
   
 
-   const AddNote = (newNote) =>{
+   const AddNote = async(newNote) =>{
     
     try {
       const res = await fetch(apiUrl('/newNote'), {
