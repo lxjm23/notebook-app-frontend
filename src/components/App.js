@@ -81,9 +81,12 @@ function App() {
  
 
   return (
-    <div>
+    <div className="container">
       <Header />
+      
+      <main className="content">
       <CreateArea onAdd={AddNote}/>
+      <div className="notes">
       {notes.map((noteItem, index) =>{
         return <Note 
         key = {index}
@@ -95,6 +98,9 @@ function App() {
         onUpdate={UpdateNote}
         />
       } )}
+      
+      </div>
+      </main>
       <Footer />
     </div>
   );
