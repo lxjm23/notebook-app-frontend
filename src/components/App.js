@@ -3,7 +3,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
 import CreateArea from "./CreateArea";
-import { apiUrl, API_BASE } from "../api";
+import { apiUrl, API_BASE, fetchWithRetry } from "../api";
 
 function App() {
 
